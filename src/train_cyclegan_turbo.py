@@ -3,7 +3,6 @@ import gc
 import copy
 import lpips
 import torch
-import wandb
 from glob import glob
 import numpy as np
 from accelerate import Accelerator
@@ -272,22 +271,6 @@ def main(args):
                     eval_unet = accelerator.unwrap_model(unet)
                     eval_vae_enc = accelerator.unwrap_model(vae_enc)
                     eval_vae_dec = accelerator.unwrap_model(vae_dec)
-                    if global_step % args.viz_freq == 1:
-                        for tracker in accelerator.trackers:
-                            if tracker.name == "wandb":
-                                viz_img_a = batch["pixel_values_src"].to(dtype=weight_dtype)
-                                viz_img_b = batch["pixel_values_tgt"].to(dtype=weight_dtype)
-                                log_dict = {
-                                    "train/real_a": [wandb.Image(viz_img_a[idx].float().detach().cpu(), caption=f"idx={idx}") for idx in range(bsz)],
-                                    "train/real_b": [wandb.Image(viz_img_b[idx].float().detach().cpu(), caption=f"idx={idx}") for idx in range(bsz)],
-                                }
-                                log_dict["train/rec_a"] = [wandb.Image(cyc_rec_a[idx].float().detach().cpu(), caption=f"idx={idx}") for idx in range(bsz)]
-                                log_dict["train/rec_b"] = [wandb.Image(cyc_rec_b[idx].float().detach().cpu(), caption=f"idx={idx}") for idx in range(bsz)]
-                                log_dict["train/fake_b"] = [wandb.Image(fake_b[idx].float().detach().cpu(), caption=f"idx={idx}") for idx in range(bsz)]
-                                log_dict["train/fake_a"] = [wandb.Image(fake_a[idx].float().detach().cpu(), caption=f"idx={idx}") for idx in range(bsz)]
-                                tracker.log(log_dict)
-                                gc.collect()
-                                torch.cuda.empty_cache()
 
                     if global_step % args.checkpointing_steps == 1:
                         outf = os.path.join(args.output_dir, "checkpoints", f"model_{global_step}.pkl")
