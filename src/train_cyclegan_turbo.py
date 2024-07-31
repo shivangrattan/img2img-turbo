@@ -22,7 +22,7 @@ from my_utils.dino_struct import DinoStructureLoss
 
 
 def main(args):
-    accelerator = Accelerator(gradient_accumulation_steps=args.gradient_accumulation_steps, log_with=args.report_to)
+    accelerator = Accelerator(gradient_accumulation_steps=args.gradient_accumulation_steps)
     set_seed(args.seed)
 
     if accelerator.is_main_process:
