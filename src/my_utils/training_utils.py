@@ -202,6 +202,12 @@ def build_transform(image_prep):
             transforms.RandomCrop((256, 256)),
             transforms.RandomHorizontalFlip(),
         ])
+    elif image_prep == "resize_156_randomcrop_128x128_hflip":
+        T = transforms.Compose([
+            transforms.Resize((156, 156), interpolation=Image.LANCZOS),
+            transforms.RandomCrop((128, 128)),
+            transforms.RandomHorizontalFlip(),
+        ])
     elif image_prep in ["resize_256", "resize_256x256"]:
         T = transforms.Compose([
             transforms.Resize((256, 256), interpolation=Image.LANCZOS)
@@ -209,6 +215,10 @@ def build_transform(image_prep):
     elif image_prep in ["resize_512", "resize_512x512"]:
         T = transforms.Compose([
             transforms.Resize((512, 512), interpolation=Image.LANCZOS)
+        ])
+    elif image_prep in ["resize_128", "resize_128x128"]:
+        T = transforms.Compose([
+            transforms.Resize((128, 128), interpolation=Image.LANCZOS)
         ])
     elif image_prep == "no_resize":
         T = transforms.Lambda(lambda x: x)
