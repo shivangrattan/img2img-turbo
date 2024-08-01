@@ -17,7 +17,6 @@ import diffusers
 from diffusers.utils.import_utils import is_xformers_available
 from diffusers.optimization import get_scheduler
 
-import wandb
 from cleanfid.fid import get_folder_features, build_feature_extractor, fid_from_feats
 
 from pix2pix_turbo import Pix2Pix_Turbo
@@ -239,16 +238,6 @@ def main(args):
                     if args.lambda_clipsim > 0:
                         logs["loss_clipsim"] = loss_clipsim.detach().item()
                     progress_bar.set_postfix(**logs)
-
-                    # viz some images
-                    if global_step % args.viz_freq == 1:
-                        log_dict = {
-                            "train/source": [wandb.Image(x_src[idx].float().detach().cpu(), caption=f"idx={idx}") for idx in range(B)],
-                            "train/target": [wandb.Image(x_tgt[idx].float().detach().cpu(), caption=f"idx={idx}") for idx in range(B)],
-                            "train/model_output": [wandb.Image(x_tgt_pred[idx].float().detach().cpu(), caption=f"idx={idx}") for idx in range(B)],
-                        }
-                        for k in log_dict:
-                            logs[k] = log_dict[k]
 
                     # checkpoint the model
                     if global_step % args.checkpointing_steps == 1:
